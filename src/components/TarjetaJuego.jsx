@@ -1,4 +1,11 @@
+import { useState } from "react";
+import ListaReseñas from "./ListaReseñas";
+import FormularioReseña from "./FormularioReseña";
+
 export default function TarjetaJuego({ juego, recargar }) {
+  const [mostrarReseñas, setMostrarReseñas] = useState(false);
+  const [reseñas, setReseñas] = useState([]);
+
   const toggleCompletado = async () => {
     try {
       await fetch(`http://localhost:4000/api/juegos/${juego._id}`, {
@@ -24,6 +31,26 @@ export default function TarjetaJuego({ juego, recargar }) {
     }
   };
 
+  const cargarReseñas = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:4000/api/reseñas?juegoId=${juego._id}`
+      );
+      const data = await res.json();
+      setReseñas(data);
+    } catch (error) {
+      console.error("Error al cargar reseñas", error);
+    }
+  };
+
+  const manejarClickReseñas = async () => {
+    const nuevoEstado = !mostrarReseñas;
+    setMostrarReseñas(nuevoEstado);
+    if (nuevoEstado) {
+      await cargarReseñas();
+    }
+  };
+
   return (
     <div
       style={{
@@ -46,12 +73,29 @@ export default function TarjetaJuego({ juego, recargar }) {
       <p>Horas jugadas: {juego.horasJugadas}</p>
       <p>Puntuación: {juego.puntuacion} ⭐</p>
       <p>Estado: {juego.completado ? "Completado ✅" : "Pendiente ⏳"}</p>
+
       <button onClick={toggleCompletado}>
         Marcar como {juego.completado ? "pendiente" : "completado"}
       </button>
       <button onClick={eliminar} style={{ marginLeft: "0.5rem" }}>
         Eliminar
       </button>
+
+      <div style={{ marginTop: "0.5rem" }}>
+        <button onClick={manejarClickReseñas}>
+          {mostrarReseñas ? "Ocultar reseñas" : "Ver reseñas"}
+        </button>
+
+        {mostrarReseñas && (
+          <div style={{ marginTop: "0.5rem" }}>
+            <ListaReseñas reseñas={reseñas} />
+            <FormularioReseña
+              juegoId={juego._id}
+              despuesDeGuardar={cargarReseñas}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
