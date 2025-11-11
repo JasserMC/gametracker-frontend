@@ -1,10 +1,10 @@
 import { useState } from "react";
-import ListaReseñas from "./ListaReseñas";
-import FormularioReseña from "./FormularioReseña";
+import ListaResenias from "./ListaResenias";
+import FormularioResenia from "./FormularioResenia";
 
-export default function TarjetaJuego({ juego, recargar }) {
-  const [mostrarReseñas, setMostrarReseñas] = useState(false);
-  const [reseñas, setReseñas] = useState([]);
+export default function TarjetaJuego({ juego, recargar, onEditar }) {
+  const [mostrarResenias, setMostrarResenias] = useState(false);
+  const [resenias, setResenias] = useState([]);
 
   const toggleCompletado = async () => {
     try {
@@ -31,23 +31,23 @@ export default function TarjetaJuego({ juego, recargar }) {
     }
   };
 
-  const cargarReseñas = async () => {
+  const cargarResenias = async () => {
     try {
       const res = await fetch(
         `http://localhost:4000/api/reseñas?juegoId=${juego._id}`
       );
       const data = await res.json();
-      setReseñas(data);
+      setResenias(data);
     } catch (error) {
       console.error("Error al cargar reseñas", error);
     }
   };
 
-  const manejarClickReseñas = async () => {
-    const nuevoEstado = !mostrarReseñas;
-    setMostrarReseñas(nuevoEstado);
+  const manejarClickResenias = async () => {
+    const nuevoEstado = !mostrarResenias;
+    setMostrarResenias(nuevoEstado);
     if (nuevoEstado) {
-      await cargarReseñas();
+      await cargarResenias();
     }
   };
 
@@ -80,6 +80,12 @@ export default function TarjetaJuego({ juego, recargar }) {
       <button onClick={eliminar} style={{ marginLeft: "0.5rem" }}>
         Eliminar
       </button>
+      <button
+        style={{ marginLeft: "0.5rem" }}
+        onClick={() => onEditar?.(juego)}
+      >
+        Editar
+      </button>
 
       <div style={{ marginTop: "0.5rem" }}>
         <button onClick={manejarClickReseñas}>
@@ -88,10 +94,10 @@ export default function TarjetaJuego({ juego, recargar }) {
 
         {mostrarReseñas && (
           <div style={{ marginTop: "0.5rem" }}>
-            <ListaReseñas reseñas={reseñas} />
-            <FormularioReseña
+            <ListaResenias resenias={resenias} />
+            <FormularioResenia
               juegoId={juego._id}
-              despuesDeGuardar={cargarReseñas}
+              despuesDeGuardar={cargarResenias}
             />
           </div>
         )}

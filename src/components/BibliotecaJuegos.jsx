@@ -1,11 +1,29 @@
+import { useState } from "react";
 import TarjetaJuego from "./TarjetaJuego";
 import FormularioJuego from "./FormularioJuego";
 
 export default function BibliotecaJuegos({ juegos, recargar }) {
+  const [juegoEditando, setJuegoEditando] = useState(null);
+
+  const empezarEdicion = (juego) => {
+    setJuegoEditando(juego);
+  };
+
+  const limpiarEdicion = () => {
+    setJuegoEditando(null);
+  };
+
   return (
     <div>
       <h2>Mi biblioteca</h2>
-      <FormularioJuego despuesDeGuardar={recargar} />
+      <FormularioJuego
+        juegoEditando={juegoEditando}
+        despuesDeGuardar={() => {
+          recargar();
+          limpiarEdicion();
+        }}
+        cancelarEdicion={limpiarEdicion}
+      />
       <div
         style={{
           display: "grid",
@@ -15,7 +33,12 @@ export default function BibliotecaJuegos({ juegos, recargar }) {
         }}
       >
         {juegos.map((juego) => (
-          <TarjetaJuego key={juego._id} juego={juego} recargar={recargar} />
+          <TarjetaJuego
+            key={juego._id}
+            juego={juego}
+            recargar={recargar}
+            onEditar={empezarEdicion}
+          />
         ))}
       </div>
     </div>
