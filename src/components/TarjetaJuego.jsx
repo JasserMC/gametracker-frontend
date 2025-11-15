@@ -34,8 +34,8 @@ export default function TarjetaJuego({ juego, recargar, onEditar }) {
   const cargarResenias = async () => {
     try {
       const res = await fetch(
-        `http://localhost:4000/api/reseñas?juegoId=${juego._id}`
-      );
+  `http://localhost:4000/api/reviews?juegoId=${juego._id}`
+    );
       const data = await res.json();
       setResenias(data);
     } catch (error) {
@@ -87,12 +87,12 @@ export default function TarjetaJuego({ juego, recargar, onEditar }) {
         Editar
       </button>
 
-      <div style={{ marginTop: "0.5rem" }}>
-        <button onClick={manejarClickReseñas}>
-          {mostrarReseñas ? "Ocultar reseñas" : "Ver reseñas"}
+                  <div style={{ marginTop: "0.5rem" }}>
+        <button onClick={manejarClickResenias}>
+          {mostrarResenias ? "Ocultar reseñas" : "Ver reseñas"}
         </button>
 
-        {mostrarReseñas && (
+        {mostrarResenias && (
           <div style={{ marginTop: "0.5rem" }}>
             <ListaResenias resenias={resenias} />
             <FormularioResenia
